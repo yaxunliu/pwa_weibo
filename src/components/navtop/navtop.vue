@@ -17,7 +17,7 @@
 
     <div class="bottom">
       <div class="navlist-wrapper">
-          <ul class="navlist-content">
+          <ul class="navlist-content" ref='scroll' :style='{width: contentWidth}'>
             <li v-for='item, index in list' :key='index' class="navlist-item">
               <a class="item-button">
                 {{item}}
@@ -41,18 +41,26 @@ export default {
   name: 'navtop',
   data() {
     return {
-      list: ['热门', '新鲜事', '搞笑', '情感', '明星', '社会', '数码', '体育', '汽车', '电影', '游戏','热门', '新鲜事', '搞笑', '情感', '明星', '社会', '数码', '体育', '汽车', '电影', '游']
+      list: ['热门', '新鲜事', '搞笑', '情感', '明星', '社会', '数码', '体育', '汽车', '电影', '游戏'],
+      contentWidth: '1000px'
     }
   },
-  mounted: () => {
+  mounted() {
+    //1. 计算出滚动的size
+    let width = 0
+    Array.from(this.$refs.scroll.children).forEach((element)=>{
+      width += element.clientWidth
+      console.log('width', element.clientWidth)
+    })
+    this.contentWidth = width + 'px'
+    console.log(this.contentWidth)
 
-    // this.$nextTick(() => {
+    this.$nextTick(() => {
       new BScroll('.navlist-wrapper', {
           click: true,
           scrollX: true
         });
-      // })
-
+      })
   }
 
 }
@@ -128,17 +136,16 @@ export default {
       box-sizing border-box
       .navlist-content
         height 100%
-        display inline
-        white-space nowrap
-        overflow scroll
-        background-color blue
+        padding-right 2.2rem
         .navlist-item
           list-style none
           height 100%
           float left
           display block
+          padding 0 0.6rem
           color #a5adb5
           font-size 0.8rem
+          line-height 44px
         .navlist-item:active
           color #262626
     .navlist-indicator-button
@@ -146,7 +153,7 @@ export default {
       right 0
       top 0
       bottom 0
-      background-color red
+      background-color white
       width 0.8rem
       padding 0 0.7rem
       display flex
