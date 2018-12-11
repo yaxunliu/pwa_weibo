@@ -7,7 +7,7 @@
       <div class="search">
         <a class="search-button">
           <img src='./imgs/search.svg' />
-          <span>大家都在搜: 吴磊 我站在这里好吗</span>
+          <span>大家都在搜: {{hot}}</span>
         </a>
       </div>
       <a class="nav-icon">
@@ -19,7 +19,7 @@
           <ul class="navlist-content" ref='scroll' :style='{width: contentWidth}'>
             <li v-for='(item, index) in list' :key='index' :class='{"navlist-item": true, "navlist-item-select": index === selectIndex}'
             @click="_changeSelect(index)">
-              <a class="item-button">{{item}}</a>
+              <a class="item-button">{{item.name}}</a>
             </li>
           </ul>
       </div>
@@ -31,7 +31,7 @@
         <ul class="spread-area-content">
           <li @click="_selectSpread(index)" :class="{'spread-item': true, 'spread-item-select': selectIndex === index }" v-for="(item, index) in list" :key="index">
             <span>
-              {{item}}
+              {{item.name}}
             </span>
           </li>
         </ul>
@@ -47,8 +47,9 @@ export default {
   name: 'navtop',
   data () {
     return {
-      list: ['热门', '新鲜事', '搞笑', '情感', '明星', '社会', '数码', '体育', '汽车', '电影', '游戏'],
+      list: [],
       contentWidth: '100px',
+      hot: '',
       selectIndex: 0,
       screenWidth: document.body.clientWidth,
       isSpread: false
@@ -76,11 +77,8 @@ export default {
       this.isSpread = !this.isSpread
     }
   },
-  async mounted () {
-    this._recaculateContentWidth()
-    this.$nextTick(() => {
-      this.scroll = new BScroll('.navlist-wrapper', { click: true, scrollX: true })
-    })
+  mounted () {
+    this.scroll = new BScroll('.navlist-wrapper', { click: true, scrollX: true })
     var that = this
     window.addEventListener('resize', () => {
       let fontSize = document.documentElement.style.fontSize
@@ -88,9 +86,21 @@ export default {
       that.lastFontSize = fontSize
       that._recaculateContentWidth()
     })
-    // request('https://m.weibo.cn/api/config/list')
-    console.log(request)
+
+
   }
+    // (async () => {
+    //   let json = await request('https://m.weibo.cn/api/config/list')
+    //   that.hot = json.data.hot.hotWord
+    //   that.list = json.data.channel.map((obj) => {
+    //     return { 'gid': obj.gid, 'name': obj.name }
+    //   })
+    //   that.$nextTick(() => {
+    //     that._recaculateContentWidth()
+    //   })
+    // })
+
+  
 
 }
 </script>
@@ -159,6 +169,7 @@ export default {
       box-sizing border-box
       .navlist-content
         height 100%
+        width 100%
         overflow hidden
         padding-right 2.2rem
         .navlist-item
