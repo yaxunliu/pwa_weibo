@@ -12,9 +12,27 @@
         padding: 0;
       }
       html {
-        font-size: 20px;
+        font-size: 16px;
+        background-color: #f2f2f2;
       }
     </style>
+
+    <script>
+      window.onload = function () {
+        let width = document.body.clientWidth
+        let fontSize = 0
+        if (width < 518) { // 小
+          fontSize = 15
+        } else if (width < 960) { // 中
+          fontSize = 17
+        } else { // 大
+          fontSize = 20
+        }
+        if (document.documentElement.style.fontSize === fontSize) { return }
+        document.documentElement.style.fontSize = fontSize + 'px'
+      }
+    </script>
+
   </head>
   <body>
     <noscript>
