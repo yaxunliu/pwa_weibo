@@ -16,7 +16,7 @@
     </div>
     <div class="bottom">
       <div class="navlist-wrapper">
-          <ul class="navlist-content" ref='scroll' :style='{width: contentWidth}'>
+          <ul v-show="list.length > 0" class="navlist-content" ref='scroll' :style='{width: contentWidth}'>
             <li v-for='(item, index) in list' :key='index' :class='{"navlist-item": true, "navlist-item-select": index === selectIndex}'
             @click="_changeSelect(index)">
               <a class="item-button">{{item.name}}</a>
@@ -47,10 +47,10 @@ export default {
   name: 'navtop',
   data () {
     return {
-      list: [],
-      contentWidth: '100px',
-      hot: '',
+      contentWidth: '',
       selectIndex: 0,
+      list: [],
+      hot: '',
       screenWidth: document.body.clientWidth,
       isSpread: false
     }
@@ -62,46 +62,50 @@ export default {
       // 判断是否需要滚到中间去
       this.scroll.scrollToElement(elment, 10, true)
     },
-    _recaculateContentWidth: function () {
-      let width = 0
-      Array.from(this.$refs.scroll.children).forEach((element) => {
-        width += (element.clientWidth)
-      })
-      this.contentWidth = (width + 1) + 'px'
-    },
-    _selectSpread: function (index) {
+    _selectSpread: function (index) {z
       this._changeSelect(index)
       this._sepreadClick()
     },
     _sepreadClick: function () {
       this.isSpread = !this.isSpread
+    },
+    _initinalScroll: function () {
+      if (this.list.length > 0) {
+        let width = 0
+        Array.from(this.$refs.scroll.children).forEach((element) => {
+          width += (element.clientWidth)
+          console.log(element.clientWidth, 'bounds', element.getBoundingClientRect())
+        })
+        this.contentWidth = (width + 1) + 'px'
+      }
+      if (!this.scroll) {
+        this.scroll=new BScroll('.navlist-wrapper', { startX: 0, click: true, scrollX: true, scrollY: false, eventPassthrough: 'vertical' })
+      } else {
+        this.scroll.refresh()
+      }
+      
     }
   },
   mounted () {
-    this.scroll = new BScroll('.navlist-wrapper', { click: true, scrollX: true })
     var that = this
+    this._initinalScroll()
     window.addEventListener('resize', () => {
       let fontSize = document.documentElement.style.fontSize
       if (that.lastFontSize === fontSize) { return }
       that.lastFontSize = fontSize
-      that._recaculateContentWidth()
+      that._initinalScroll()
     })
-
-
+    this.$store.dispatch('loadConfigList', async function(json) {
+      let data = json.data.channel.map((obj) => {
+        return { 'gid': obj.gid, 'name': obj.name }
+      })
+      that.list = data
+      that.hot = json.data.hot.hotWord
+    })
+  },
+  updated () {
+    this._initinalScroll()
   }
-    // (async () => {
-    //   let json = await request('https://m.weibo.cn/api/config/list')
-    //   that.hot = json.data.hot.hotWord
-    //   that.list = json.data.channel.map((obj) => {
-    //     return { 'gid': obj.gid, 'name': obj.name }
-    //   })
-    //   that.$nextTick(() => {
-    //     that._recaculateContentWidth()
-    //   })
-    // })
-
-  
-
 }
 </script>
 
@@ -164,23 +168,21 @@ export default {
     .navlist-wrapper
       height 100%
       width 100%
-      display inline-block
       padding-right 2.2rem
       box-sizing border-box
       .navlist-content
         height 100%
         width 100%
-        overflow hidden
         padding-right 2.2rem
+        overflow hidden
         .navlist-item
           list-style none
           height 100%
           float left
-          display block
           padding 0 0.75rem
           color #a5adb5
           font-size 1rem
-          line-height 44px
+          line-height 2.8rem
           cursor pointer
         .navlist-item:active
           .item-button

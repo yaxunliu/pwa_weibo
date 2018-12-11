@@ -22,15 +22,17 @@
         let width = document.body.clientWidth
         let fontSize = 0
         if (width < 518) { // 小
-          fontSize = 15
+          fontSize = '15px'
         } else if (width < 960) { // 中
-          fontSize = 17
+          fontSize = '17px'
         } else { // 大
-          fontSize = 20
+          fontSize = '20px'
         }
-        if (document.documentElement.style.fontSize === fontSize) { return }
-        document.documentElement.style.fontSize = fontSize + 'px'
+        document.documentElement.style.fontSize = fontSize
+        console.log('set html font-szie ', fontSize)
       }
+
+      
     </script>
 
   </head>
