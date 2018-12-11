@@ -14,7 +14,6 @@
         <img src='./imgs/edit.svg'/>
       </a>
     </div>
-
     <div class="bottom">
       <div class="navlist-wrapper">
           <ul class="navlist-content" ref='scroll' :style='{width: contentWidth}'>
@@ -24,16 +23,25 @@
             </li>
           </ul>
       </div>
-      <a class="navlist-indicator-button">
-        <img src='./imgs/arrow-down.svg' />
+      <a class="navlist-indicator-button" @click="_sepreadClick">
+        <img :class='{"img-normal": !isSpread, "img-spread": isSpread }' src='./imgs/arrow-down.svg' />
       </a>
+    </div>
+    <div v-show="isSpread" class="spread-area-wrapper">
+        <ul class="spread-area-content">
+          <li @click="_selectSpread(index)" :class="{'spread-item': true, 'spread-item-select': selectIndex === index }" v-for="(item, index) in list" :key="index">
+            <span>
+              {{item}}
+            </span>
+          </li>
+        </ul>
     </div>
   </div>
 </template>
 
 <script>
-
 import BScroll from 'better-scroll'
+const { request } = require('../../utils/fetchTool.js')
 
 export default {
   name: 'navtop',
@@ -42,7 +50,8 @@ export default {
       list: ['热门', '新鲜事', '搞笑', '情感', '明星', '社会', '数码', '体育', '汽车', '电影', '游戏'],
       contentWidth: '100px',
       selectIndex: 0,
-      screenWidth: document.body.clientWidth
+      screenWidth: document.body.clientWidth,
+      isSpread: false
     }
   },
   methods: {
@@ -50,19 +59,24 @@ export default {
       this.selectIndex = index
       let elment = Array.from(this.$refs.scroll.children)[index]
       // 判断是否需要滚到中间去
-      this.scroll.scrollToElement(elment, 1000, true)
+      this.scroll.scrollToElement(elment, 10, true)
     },
     _recaculateContentWidth: function () {
       let width = 0
       Array.from(this.$refs.scroll.children).forEach((element) => {
         width += (element.clientWidth)
       })
-
       this.contentWidth = (width + 1) + 'px'
-      console.log(this.contentWidth)
+    },
+    _selectSpread: function (index) {
+      this._changeSelect(index)
+      this._sepreadClick()
+    },
+    _sepreadClick: function () {
+      this.isSpread = !this.isSpread
     }
   },
-  mounted () {
+  async mounted () {
     this._recaculateContentWidth()
     this.$nextTick(() => {
       this.scroll = new BScroll('.navlist-wrapper', { click: true, scrollX: true })
@@ -74,7 +88,10 @@ export default {
       that.lastFontSize = fontSize
       that._recaculateContentWidth()
     })
+    // request('https://m.weibo.cn/api/config/list')
+    console.log(request)
   }
+
 }
 </script>
 
@@ -180,7 +197,51 @@ export default {
       width 0.8rem
       padding 0 0.7rem
       display flex
-      img
+      .img-normal
         width 100%
+        transform rotate(0deg)
+        transition transform .25s linear
+        -webkit-transition transform .25s linear
+        -moz-transition transform .25s linear
+        -o-transition transform .25s linear
+      .img-spread
+        width 100%
+        transform rotate(180deg)
+        transition transform .25s linear
+        -webkit-transition transform .25s linear
+        -moz-transition transform .25s linear
+        -o-transition transform .25s linear
+
+  .spread-area-wrapper
+    padding-bottom 1rem
+    background-color #fff
+    padding-left 0.7rem
+    padding-right 0.7rem
+    .spread-area-content
+      display flex
+      flex-direction row
+      flex-wrap wrap
+      justify-content flex-start
+      .spread-item
+        list-style none
+        width 22%
+        height 2.3rem
+        line-height 2.3rem
+        text-align center
+        box-sizing border-box
+        margin-top 0.5rem
+        margin-bottom 0.5rem
+        background-color #eeeeee
+        border-radius 4px
+        margin-right 4%
+        span
+          width 100%
+          height 100%
+          font-size: 0.8rem
+          display inline-block
+      .spread-item-select
+        color #fd9133
+      .spread-item:nth-child(4n)
+        margin-right 0
 
 </style>
