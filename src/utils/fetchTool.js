@@ -1,5 +1,5 @@
 
-let proxyUrl = 'http://192.168.1.4:1000'
+let proxyUrl = 'http://localhost:1000'
 /// 请求数据方法
 let request = function (url) {
   let urlStr = proxyUrl + `?url=${url}`

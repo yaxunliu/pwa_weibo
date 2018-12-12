@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <Navtop></Navtop>
+    <navtop></navtop>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -34,6 +35,9 @@ export default {
 <style lang="stylus">
   #app
     width 100%
-    background-color blue
+    background-color #f2f2f2
+    padding-top 5.7rem
+    box-sizing border-box
+    height 100%
 
 </style>

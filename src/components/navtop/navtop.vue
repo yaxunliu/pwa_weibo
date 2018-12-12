@@ -40,9 +40,6 @@
 </template>
 
 <script>
-import BScroll from 'better-scroll'
-const { request } = require('../../utils/fetchTool.js')
-
 export default {
   name: 'navtop',
   data () {
@@ -58,53 +55,31 @@ export default {
   methods: {
     _changeSelect: function (index) {
       this.selectIndex = index
-      let elment = Array.from(this.$refs.scroll.children)[index]
-      // 判断是否需要滚到中间去
-      this.scroll.scrollToElement(elment, 10, true)
+      let element = Array.from(this.$refs.scroll.children)[index]
+      this.$refs.scroll.scrollTo(element.offsetLeft + element.offsetWidth * 0.5 - document.documentElement.clientWidth * 0.5, 0)
     },
-    _selectSpread: function (index) {z
+    _selectSpread: function (index) {
       this._changeSelect(index)
       this._sepreadClick()
     },
     _sepreadClick: function () {
       this.isSpread = !this.isSpread
-    },
-    _initinalScroll: function () {
-      if (this.list.length > 0) {
-        let width = 0
-        Array.from(this.$refs.scroll.children).forEach((element) => {
-          width += (element.clientWidth)
-          console.log(element.clientWidth, 'bounds', element.getBoundingClientRect())
-        })
-        this.contentWidth = (width + 1) + 'px'
-      }
-      if (!this.scroll) {
-        this.scroll=new BScroll('.navlist-wrapper', { startX: 0, click: true, scrollX: true, scrollY: false, eventPassthrough: 'vertical' })
-      } else {
-        this.scroll.refresh()
-      }
-      
     }
   },
   mounted () {
     var that = this
-    this._initinalScroll()
     window.addEventListener('resize', () => {
       let fontSize = document.documentElement.style.fontSize
       if (that.lastFontSize === fontSize) { return }
       that.lastFontSize = fontSize
-      that._initinalScroll()
     })
-    this.$store.dispatch('loadConfigList', async function(json) {
+    this.$store.dispatch('loadConfigList', async function (json) {
       let data = json.data.channel.map((obj) => {
         return { 'gid': obj.gid, 'name': obj.name }
       })
       that.list = data
       that.hot = json.data.hot.hotWord
     })
-  },
-  updated () {
-    this._initinalScroll()
   }
 }
 </script>
@@ -121,6 +96,7 @@ export default {
   margin 0 auto
   background-color white
   height 5.7rem
+  z-index 1000
   .top
     display flex
     flex-direction row
@@ -130,6 +106,7 @@ export default {
     .nav-icon
       height 100%
       width 1.6rem
+      min-width 24px
       display flex
       align-items center
       padding-left 0.75rem
@@ -172,18 +149,20 @@ export default {
       box-sizing border-box
       .navlist-content
         height 100%
-        width 100%
+        display -webkit-box
         padding-right 2.2rem
-        overflow hidden
+        overflow-x scroll
+        -webkit-overflow-scrolling touch
         .navlist-item
           list-style none
           height 100%
-          float left
           padding 0 0.75rem
           color #a5adb5
           font-size 1rem
           line-height 2.8rem
           cursor pointer
+        .navlist-item:last-child
+          margin-right 2.2rem
         .navlist-item:active
           .item-button
             background-color #bdbdbd
@@ -200,7 +179,8 @@ export default {
           width 1rem
           position absolute
           background-color #262626
-
+      .navlist-content::-webkit-scrollbar
+        display none
     .navlist-indicator-button
       position absolute
       right 0
