@@ -29,7 +29,7 @@ export default {
         let num = parseFloat(count / 10000)
         return Math.round(num * 10) / 10 + '万'
       }
-      return count
+      return count + ' '
     }
   },
 
@@ -75,12 +75,9 @@ export default {
     .pic-item
       width 32%
       padding-bottom 32%
-      background-size cover
       margin-top 2%
       margin-left 2%
-      background-image url("../../assets/more.svg")
-      background-position center center
-      background-color red
+      background-color #f2f2f2
       font-size 0
       overflow hidden
       position relative
