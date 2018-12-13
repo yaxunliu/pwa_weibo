@@ -1,5 +1,5 @@
 <template>
-  <li class="card-wrapper" v-if="mblog">
+  <div class="card-wrapper" v-if="mblog">
     <article class="card-content">
       <weibo-header :avator="mblog.user.profile_image_url" :nick="mblog.user.screen_name" :sub-desc="mblog.source ? mblog.created_at + '  ' + '来自' + mblog.source : mblog.created_at"></weibo-header>
       <span class="text-content" v-html="mblog.text"></span>
@@ -10,7 +10,7 @@
       </a>
     </div>
     <weibo-footer :forward="_transformCount(mblog.reposts_count)" :nice="_transformCount(mblog.attitudes_count)" :commen="_transformCount(mblog.comments_count)"></weibo-footer>
-  </li>
+  </div>
 </template>
 
 <script>
@@ -53,7 +53,6 @@ export default {
 
 <style lang="stylus" ref="stylesheet/stylus">
 .card-wrapper
-  list-style none
   background-color white
   .card-content
     .text-content

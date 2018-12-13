@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0, minmum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>pwa_weibo</title>
+    <title>微博</title>
     <style>
       * {
         margin: 0;
@@ -14,19 +14,18 @@
       html {
         font-size: 16px;
         background-color: #f2f2f2;
+        -webkit-text-size-adjust: none;
       }
     </style>
 
     <script>
-
       let h = window.innerHeight
-      console.log(h)
       document.documentElement.style.height = h + 'px'
       window.onload = function () {
         let width = document.body.clientWidth
         let fontSize = 0
         if (width < 518) { // 小
-          fontSize = '15px'
+          fontSize = '16px'
         } else if (width < 960) { // 中
           fontSize = '17px'
         } else { // 大

@@ -16,8 +16,8 @@
     </div>
     <div class="bottom">
       <div class="navlist-wrapper">
-          <ul v-show="list.length > 0" class="navlist-content" ref='scroll' :style='{width: contentWidth}'>
-            <li v-for='(item, index) in list' :key='index' :class='{"navlist-item": true, "navlist-item-select": index === selectIndex}'
+          <ul v-show="configList.length > 0" class="navlist-content" ref='navscroll'>
+            <li v-for='(item, index) in configList' :key='index' :class='{"navlist-item": true, "navlist-item-select": index === selectIndex}'
             @click="_changeSelect(index)">
               <a class="item-button">{{item.name}}</a>
             </li>
@@ -29,7 +29,7 @@
     </div>
     <div v-show="isSpread" class="spread-area-wrapper">
         <ul class="spread-area-content">
-          <li @click="_selectSpread(index)" :class="{'spread-item': true, 'spread-item-select': selectIndex === index }" v-for="(item, index) in list" :key="index">
+          <li @click="_selectSpread(index)" :class="{'spread-item': true, 'spread-item-select': selectIndex === index }" v-for="(item, index) in configList" :key="index">
             <span>
               {{item.name}}
             </span>
@@ -44,19 +44,19 @@ export default {
   name: 'navtop',
   data () {
     return {
-      contentWidth: '',
       selectIndex: 0,
-      list: [],
-      hot: '',
-      screenWidth: document.body.clientWidth,
       isSpread: false
     }
+  },
+  props: {
+    configList: Array,
+    hot: String
   },
   methods: {
     _changeSelect: function (index) {
       this.selectIndex = index
-      let element = Array.from(this.$refs.scroll.children)[index]
-      this.$refs.scroll.scrollTo(element.offsetLeft + element.offsetWidth * 0.5 - document.documentElement.clientWidth * 0.5, 0)
+      let element = Array.from(this.$refs.navscroll.children)[index]
+      this.$refs.navscroll.scrollTo(element.offsetLeft + element.offsetWidth * 0.5 - document.documentElement.clientWidth * 0.5, 0)
     },
     _selectSpread: function (index) {
       this._changeSelect(index)
@@ -72,13 +72,6 @@ export default {
       let fontSize = document.documentElement.style.fontSize
       if (that.lastFontSize === fontSize) { return }
       that.lastFontSize = fontSize
-    })
-    this.$store.dispatch('loadConfigList', async function (json) {
-      let data = json.data.channel.map((obj) => {
-        return { 'gid': obj.gid, 'name': obj.name }
-      })
-      that.list = data
-      that.hot = json.data.hot.hotWord
     })
   }
 }
@@ -138,7 +131,7 @@ export default {
           white-space nowrap
           text-overflow ellipsis
           width 100%
-          font-size 0.8rem
+          font-size 0.7rem
   .bottom
     position relative
     height 2.8rem

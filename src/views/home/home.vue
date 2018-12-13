@@ -1,43 +1,88 @@
 <template>
-  <div class="hot">
-      <div class="scroll-wrapper">
-        <ul v-show="cards.length > 0" class="scroll-content">
-          <div class="refresh-header" style="">refresh header</div>
-          <weibo-card v-for="item in cards" :key="item.itemid" :json="item"></weibo-card>
-          <div class="refresh-footer" style="background-color: red;">refresh footer</div>
-        </ul>
-      </div>
+  <div class="hot" ref="scroll">
+    <div v-show="cards.length > 0" class="scroll-content">
+      <refresh-header :status=status></refresh-header>
+      <weibo-card v-for="item in cards" :key="item.itemid" :json="item"></weibo-card>
+      <refresh-footer :status="loadStatus"></refresh-footer>
+    </div>
   </div>
 </template>
 <script>
 import WeiboCard from '../../components/weiboCardCell/weiboCardCell'
+import RefreshHeader from '../../components/refreshHeader/refreshHeader'
+import RefreshFooter from '../../components/refreshFooter/refreshFooter'
 import BScroll from 'better-scroll'
+const { loadContainerIndex } = require('../../utils/fechData')
 
 export default {
   name: 'home',
   data () {
     return {
-      cards: []
+      cards: [],
+      refreshTip: '下拉刷新',
+      status: 0,
+      loadStatus: 1
+    }
+  },
+  methods: {
+    _loadData: async function () {
+      try {
+        let result = await loadContainerIndex()
+        this.cards = result.data.cards
+        this._initinalScroll()
+      } catch (err) {
+        console.log(err)
+        return 11
+      }
+    },
+    _initinalScroll: async function () {
+      if (this.scroll) {
+        this.scroll.refresh()
+      } else {
+        await this.$nextTick()
+        this.scroll = new BScroll('.hot', {
+          click: true,
+          scrollY: true,
+          scrollX: false,
+          pullDownRefresh: { threshold: 50, stop: 30 },
+          probeType: 2,
+          pullUpLoad: { threshold: 50 }
+        })
+        this._listenRefresh()
+      }
+    },
+    _listenRefresh: function () {
+      this.scroll.on('pullingDown', () => {
+        this.status = 2
+        setTimeout(() => {
+          this.scroll.finishPullDown()
+          this.status = 0
+        }, 2000)
+      })
+      this.scroll.on('scroll', (pos) => {
+        if (pos.y > 50 && this.status === 0) {
+          this.status = 1
+        }
+      })
+      this.scroll.on('pullingUp', () => {
+        console.log('pull up load')
+        this.loadStatus = 1
+        setTimeout(() => {
+          this.scroll.finishPullUp()
+          this.loadStatus = 0
+        }, 2000)
+      })
     }
   },
   mounted () {
-    var that = this
-    this.$store.dispatch('loadContainerIndex', function (json) {
-      that.cards = json.data.cards
-      console.log(json)
-    })
-    this._initinalScroll()
-  },
-  methods: {
-    _initinalScroll () {
-      this.scroll = new BScroll('.scroll-wrapper', { click: true, scrollY: true })
-    }
+    this._loadData()
   },
   components: {
-    WeiboCard
+    WeiboCard,
+    RefreshHeader,
+    RefreshFooter
   }
 }
-
 </script>
 
 <style scoped lang="stylus" ref="stylesheet/stylus">
@@ -46,13 +91,8 @@ export default {
   min-width 320px
   margin 0 auto
   height 100%
-  .scroll-wrapper
-    height 100%
-    .scroll-content
-      position relative
-      .refresh-header
-        position absolute
-        top -20px
+  .scroll-content
+    position relative
 .hot::-webkit-scrollbar
   display none
 </style>
