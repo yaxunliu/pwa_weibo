@@ -44,8 +44,8 @@ export default {
   position absolute
   left 0
   right 0
-  height 30px
-  top -30px
+  height 2rem
+  top -2rem
   i
     font-size 0
     padding-right 10px

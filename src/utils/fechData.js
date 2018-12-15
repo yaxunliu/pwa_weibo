@@ -1,18 +1,19 @@
-const { request } = require('./fetchTool.js')
+const { get } = require('./fetchTool.js')
 let configList = require('../TestDataJson/configList.json')
 let containerList = require('../TestDataJson/container.json')
 
-async function loadConfigList () {
+function loadConfigList () {
   try {
-    return await request('/api/config/list')
+    return get('/api/config/list')
   } catch (err) {
-    console.log('error')
     return configList
   }
 }
-async function loadContainerIndex () {
+function loadContainerIndex (uid, page) {
   try {
-    return await request('/api/container/getIndex?containerid=102803&openApp=0')
+    let pagenum = page || 0
+    let url = `/api/container/getIndex?containerid=${uid}&openApp=0&page=${pagenum}`
+    return get(url)
   } catch (err) {
     return containerList
   }

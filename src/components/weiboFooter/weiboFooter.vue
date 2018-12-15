@@ -34,7 +34,6 @@ export default {
 <style scoped lang="stylus" ref="stylesheet/stylus">
 .footer-wrapper
   list-style none
-  padding 0 0.75rem
   position relative
   .footer-content
     hieght 1rem

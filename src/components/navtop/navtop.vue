@@ -57,6 +57,7 @@ export default {
       this.selectIndex = index
       let element = Array.from(this.$refs.navscroll.children)[index]
       this.$refs.navscroll.scrollTo(element.offsetLeft + element.offsetWidth * 0.5 - document.documentElement.clientWidth * 0.5, 0)
+      this.$emit('changeSelect', index)
     },
     _selectSpread: function (index) {
       this._changeSelect(index)

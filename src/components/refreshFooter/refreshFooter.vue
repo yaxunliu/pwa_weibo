@@ -24,7 +24,7 @@ export default {
   justify-content center
   align-items center
   background-color #ffffff00
-  height 30px
+  height 2rem
   i
     display inline-block
     height 60%

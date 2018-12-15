@@ -9,7 +9,7 @@
         <img :src="pic.url" alt="">
       </a>
     </div>
-    <weibo-footer :forward="_transformCount(mblog.reposts_count)" :nice="_transformCount(mblog.attitudes_count)" :commen="_transformCount(mblog.comments_count)"></weibo-footer>
+    <weibo-footer class="footer" :forward="_transformCount(mblog.reposts_count)" :nice="_transformCount(mblog.attitudes_count)" :commen="_transformCount(mblog.comments_count)"></weibo-footer>
   </div>
 </template>
 
@@ -94,5 +94,6 @@ export default {
       margin-top 0
     .pic-item:nth-child(3n+1)
       margin-left 0
-
+  .footer
+    padding 0 0.75rem
 </style>
